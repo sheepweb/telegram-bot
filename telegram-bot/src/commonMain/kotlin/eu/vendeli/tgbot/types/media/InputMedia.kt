@@ -26,10 +26,7 @@ import kotlin.time.Duration
 @Serializable
 @Suppress("OVERRIDE_DEPRECATION")
 sealed class InputMedia : ImplicitMediaData {
-    @OptIn(ExperimentalSerializationApi::class, InternalSerializationApi::class)
-    val type: String by lazy {
-        this::class.serializer().descriptor.serialName
-    }
+    abstract val type: String
 
     @Serializable
     @SerialName("audio")
@@ -42,7 +39,9 @@ sealed class InputMedia : ImplicitMediaData {
         val duration: Int? = null,
         val performer: String? = null,
         val title: String? = null,
-    ) : InputMedia()
+    ) : InputMedia() {
+        override val type: String = "audio"
+    }
 
     @Serializable
     @SerialName("document")
@@ -53,18 +52,23 @@ sealed class InputMedia : ImplicitMediaData {
         val parseMode: ParseMode? = null,
         val captionEntities: List<MessageEntity>? = null,
         val disableContentTypeDetection: Boolean? = null,
-    ) : InputMedia()
+    ) : InputMedia() {
+        override val type: String = "document"
+    }
 
     @Serializable
     @SerialName("photo")
     data class Photo(
         override var media: ImplicitFile,
+        override var thumbnail: ImplicitFile? = null,
         val caption: String? = null,
         val parseMode: ParseMode? = null,
         val captionEntities: List<MessageEntity>? = null,
         val hasSpoiler: Boolean? = null,
         val showCaptionAboveMedia: Boolean? = null,
-    ) : InputMedia()
+    ) : InputMedia() {
+        override val type: String = "photo"
+    }
 
     @Serializable
     @SerialName("video")
@@ -83,7 +87,9 @@ sealed class InputMedia : ImplicitMediaData {
         val supportsStreaming: Boolean? = null,
         val hasSpoiler: Boolean? = null,
         val showCaptionAboveMedia: Boolean? = null,
-    ) : InputMedia()
+    ) : InputMedia() {
+        override val type: String = "video"
+    }
 
     @Serializable
     @SerialName("animation")
@@ -98,5 +104,7 @@ sealed class InputMedia : ImplicitMediaData {
         val duration: Int? = null,
         val hasSpoiler: Boolean? = null,
         val showCaptionAboveMedia: Boolean? = null,
-    ) : InputMedia()
+    ) : InputMedia() {
+        override val type: String = "animation"
+    }
 }
