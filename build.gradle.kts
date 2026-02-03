@@ -4,7 +4,10 @@ allprojects {
         gradlePluginPortal()
     }
     group = "eu.vendeli"
-    version = providers.gradleProperty("libVersion").getOrElse("dev")
+    // Support both -Pversion (JitPack) and -PlibVersion (manual release)
+    version = providers.gradleProperty("version").orElse(
+        providers.gradleProperty("libVersion")
+    ).getOrElse("dev")
 }
 
 plugins {
