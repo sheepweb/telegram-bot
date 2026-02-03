@@ -27,26 +27,26 @@ class SendMediaGroupAction(
         // check api restricts according to Telegram Bot API:
         // "Documents and audio files can be only grouped in an album with messages of the same type"
         // This means: Photo + Video can be mixed, but Document/Audio must be grouped with same type only
-        require(media.none { it.type == "animation" }) {
+        require(media.none { it is InputMedia.Animation }) {
             "Animation type is not supported by Telegram API for media groups"
         }
 
-        val hasDocument = media.any { it.type == "document" }
-        val hasAudio = media.any { it.type == "audio" }
-        val hasPhotoOrVideo = media.any { it.type == "photo" || it.type == "video" }
+        val hasDocument = media.any { it is InputMedia.Document }
+        val hasAudio = media.any { it is InputMedia.Audio }
+        val hasPhotoOrVideo = media.any { it is InputMedia.Photo || it is InputMedia.Video }
 
         if (hasDocument) {
-            require(media.all { it.type == "document" }) {
+            require(media.all { it is InputMedia.Document }) {
                 "Documents can only be grouped with other documents"
             }
         }
         if (hasAudio) {
-            require(media.all { it.type == "audio" }) {
+            require(media.all { it is InputMedia.Audio }) {
                 "Audio files can only be grouped with other audio files"
             }
         }
         if (hasPhotoOrVideo) {
-            require(media.all { it.type == "photo" || it.type == "video" }) {
+            require(media.all { it is InputMedia.Photo || it is InputMedia.Video }) {
                 "Photos and videos can only be grouped together, not with documents or audio"
             }
         }
